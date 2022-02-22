@@ -106,6 +106,8 @@ namespace Cache_Client
         {
             messages.Send(new DataModel(null, null, "clear"));
             dataModel = null;
+            
+
         }
 
         public void Dispose()
