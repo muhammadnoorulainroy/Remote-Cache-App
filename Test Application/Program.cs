@@ -23,9 +23,9 @@ namespace Test_Application
                 client = new Client(iPEndPoint, DisplayResponseEvents, DisplayDataChangeEvents);
                 client.Initialize();
 
-                /*client = new Client(iPEndPoint, DisplayCustomEvents, DisplayCustomDataModelEvents);
-                client.Initialize();
-                client2 = new Client(iPEndPoint, DisplayCustomEvents, DisplayCustomDataModelEvents);
+                client2 = new Client(iPEndPoint, DisplayResponseEvents, DisplayDataChangeEvents);
+                client2.Initialize();
+                /*client2 = new Client(iPEndPoint, DisplayCustomEvents, DisplayCustomDataModelEvents);
                 client2.Initialize();
                 Thread thread1 = new Thread(() => {
                     DataModel data = (DataModel)client.Get("bcv");
@@ -41,20 +41,25 @@ namespace Test_Application
                     }
 
                 });*/
-                /*Thread thread2 = new Thread(() => client.Add("3232", "Zeeshan"));
-                Thread thread3 = new Thread(() => client.Add("90878", "Zeqi"));
+                Thread thread2 = new Thread(() => client.Add("3232", new Customer { Name = "Zeeshan", Age = 23 }));
+                Thread thread3 = new Thread(() => client.Add("90878", new Customer { Name = "Zeeshan", Age = 23 }));
 
 
-                Thread thread4 = new Thread(() => client2.Add("65464", "Noor"));
-                Thread thread5 = new Thread(() => client2.Add("hgfh", "Zeeshan"));
-                Thread thread6 = new Thread(() => client2.Add("43534", "Zeqi"));*//*
+                Thread thread4 = new Thread(() => client2.Add("65464", new Customer { Name = "Zeeshan", Age = 23 }));
+                Thread thread5 = new Thread(() => client2.Add("hgfh", new Customer { Name = "Zeeshan", Age = 23 }));
+                Thread thread6 = new Thread(() => client2.Remove("3232"));
 
                 //thread1.Start();
-                *//*thread2.Start();
+                thread2.Start();
                 thread3.Start();
                 thread4.Start();
                 thread5.Start();
-                thread6.Start();*/
+                thread6.Start();
+                Console.WriteLine("thread 2 ID: " + thread2.ManagedThreadId);
+                Console.WriteLine("thread 3 ID: " + thread3.ManagedThreadId);
+                Console.WriteLine("thread 4 ID: " + thread4.ManagedThreadId);
+                Console.WriteLine("thread 5 ID: " + thread5.ManagedThreadId);
+                Console.WriteLine("thread 6 ID: " + thread6.ManagedThreadId);
 
 
                 /*Thread[] threads = new Thread[20];
@@ -84,9 +89,9 @@ namespace Test_Application
                      threads[i].Start();
                  }*/
 
-                //Console.ReadKey();
+                Console.ReadKey();
 
-                StartClient();
+                //StartClient();
             }
             catch (SocketException)
             {

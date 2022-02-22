@@ -82,8 +82,8 @@ namespace Cache_Client
                     }
                     else
                     {
-                        OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + currentDataModel.Message));
-                        OnDataChangeEvent(new DataChangeEvent(currentDataModel));
+                        dataModel = currentDataModel;
+                        resetEvent.Set();
                     }
                 }
                 catch (Exception ex)
@@ -99,15 +99,23 @@ namespace Cache_Client
         /// </summary>
         public void Add(string key, object value)
         {
+            resetEvent.Reset();
             messages.Send(new DataModel(key, serializer.SerializeData(value), "add"));
+            resetEvent.WaitOne(2000);
+            if (dataModel != null)
+            {
+                OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + dataModel.Message));
+                OnDataChangeEvent(new DataChangeEvent(dataModel));
+            }
+
         }
 
         public void Clear()
         {
             messages.Send(new DataModel(null, null, "clear"));
+            OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + dataModel.Message));
+            OnDataChangeEvent(new DataChangeEvent(dataModel));
             dataModel = null;
-            
-
         }
 
         public void Dispose()
@@ -145,17 +153,26 @@ namespace Cache_Client
 
         public void Remove(string key)
         {
-            messages.Send(new DataModel(key, null, "remove"));   
+            resetEvent.Reset();
+            messages.Send(new DataModel(key, null, "remove"));
+            resetEvent.WaitOne(2000);
+            if(dataModel != null)
+            {
+                OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + dataModel.Message));
+                OnDataChangeEvent(new DataChangeEvent(dataModel));
+            }
         }
 
         public void Sub(string action)
         {
             messages.Send(new DataModel(action, null, "subscribe"));
+            OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + dataModel.Message));
         }
 
         public void UnSub(string action)
         {
             messages.Send(new DataModel(action, null, "unsubscribe"));
+            OnResponseEvent(new ResponseEvent(Thread.CurrentThread.ManagedThreadId + " Client: " + client.LocalEndPoint + " " + dataModel.Message));
         }
     }
 }
